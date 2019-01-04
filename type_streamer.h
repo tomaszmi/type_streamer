@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <experimental/tuple>
 
 namespace type_streamer
 {
@@ -182,6 +183,29 @@ template <typename T>
 inline std::ostream& serialize(std::ostream& out, const Enum<T>& value)
 {
     return details::serialize_enum(out, value.value);
+}
+
+template<typename T>
+std::ostream& serialize_tuple_impl(std::ostream& out, const T& value)
+{
+    return serialize(out, value);
+}
+
+template<typename T, typename ... Ts>
+std::ostream& serialize_tuple_impl(std::ostream& out, const T& head, const Ts&... tail)
+{
+    serialize(out, head) << ", ";
+    return serialize_tuple_impl(out, tail...);
+}
+
+template<typename ... Ts>
+std::ostream& serialize(std::ostream& out, const std::tuple<Ts...>& value)
+{
+    out << '{';
+    std::experimental::apply([&out](const auto& ... elem){
+        serialize_tuple_impl(out, elem...);
+    }, value);
+    return out << '}';
 }
 
 template <typename T, typename Allocator>

@@ -21,7 +21,7 @@ struct Foo
     std::vector<std::string> v;
     std::pair<int, std::string> m;
     Bar b;
-    std::tuple<int, std::string> t;
+    std::tuple<int, std::string, const char*> t;
 };
 
 std::ostream& operator<<(std::ostream& out, MyEnum value)
@@ -56,11 +56,11 @@ std::ostream& operator<<(std::ostream& out, const Foo& value)
         .var("v", value.v)
         .var("m", value.m)
         .var("b", value.b)
-        //.var("t", value.t)
+        .var("t", value.t)
     ;
 }
 
 int main()
 {
-    std::cout << Foo{10, {"abc", "xyz"}, {7, "7"}, {1, {{1, "1"}, {2, "2"}}, MyEnum::bbb, YourEnum::fff}} << "\n";
+    std::cout << Foo{10, {"abc", "xyz"}, {7, "7"}, {1, {{1, "1"}, {2, "2"}}, MyEnum::bbb, YourEnum::fff}, {12, "tuple_elem1", "tuple_elem2"}} << "\n";
 }
